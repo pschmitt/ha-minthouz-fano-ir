@@ -1,0 +1,31 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "description": "Select the infrared emitter that will be used to send commands to the fan.",
+        "data": {
+          "infrared_entity_id": "Infrared emitter"
+        }
+      }
+    },
+    "abort": {
+      "no_infrared_entities": "No infrared emitter entities were found. Set up an Infrared-compatible device (e.g. an ESPHome IR blaster) first."
+    }
+  },
+  "entity": {
+    "button": {
+      "led": {
+        "name": "LED"
+      },
+      "timer_2h": {
+        "name": "Timer 2H"
+      },
+      "timer_4h": {
+        "name": "Timer 4H"
+      },
+      "timer_6h": {
+        "name": "Timer 6H"
+      }
+    }
+  }
+}

@@ -7,6 +7,7 @@ entity's state from reality until the next command is sent.
 
 from __future__ import annotations
 
+import asyncio
 from typing import Any
 
 from homeassistant.components.fan import FanEntity, FanEntityFeature
@@ -24,6 +25,11 @@ from .const import CONF_INFRARED_ENTITY_ID, FanoCode, ORDERED_SPEEDS, SPEED_CODE
 from .entity import MinthouzFanoEntity
 
 DEFAULT_SPEED = ORDERED_SPEEDS[0]
+
+# The fan's speed buttons only take effect while it's already powered on —
+# they do not turn it on themselves, unlike the dedicated (toggle) power
+# button. Give the unit a moment to wake up before sending a speed code.
+POWER_ON_SETTLE_DELAY = 0.5
 
 
 async def async_setup_entry(
@@ -90,13 +96,22 @@ class MinthouzFanoFan(
         self.async_write_ha_state()
 
     async def async_set_percentage(self, percentage: int) -> None:
-        """Set the fan speed, turning it on in the process."""
+        """Set the fan speed, powering it on first if it's currently off.
+
+        The speed buttons are a no-op while the fan is off, so an explicit
+        power-on (toggle) is only sent when we believe it's currently off.
+        """
         if percentage == 0:
             await self.async_turn_off()
             return
 
+        if not self._attr_is_on:
+            await self._send_command(FanoCode.POWER.to_command())
+            self._attr_is_on = True
+            self.async_write_ha_state()
+            await asyncio.sleep(POWER_ON_SETTLE_DELAY)
+
         speed = percentage_to_ordered_list_item(ORDERED_SPEEDS, percentage)
         await self._send_command(SPEED_CODES[speed].to_command())
-        self._attr_is_on = True
         self._attr_percentage = ordered_list_item_to_percentage(ORDERED_SPEEDS, speed)
         self.async_write_ha_state()

@@ -30,9 +30,26 @@ using the `infrared`/`ir_rf_proxy` platform, pointed at a real IR LED).
 - Home Assistant **2026.3.0+** (for the `infrared` building-block integration
   and for custom-integration branding support).
 - An existing `infrared.*` **emitter** entity in your Home Assistant instance.
-  See <https://www.home-assistant.io/integrations/infrared/> for background,
-  and ESPHome's experimental `infrared`/`ir_rf_proxy` component for a DIY
-  way to build one out of any ESP32 with an IR LED.
+  See <https://www.home-assistant.io/integrations/infrared/> for background.
+  Don't have one? See below.
+
+## Building your own IR blaster
+
+A ready-to-flash, generic ESPHome config lives at
+[`esphome/ir-blaster.yaml`](esphome/ir-blaster.yaml) — it works on any ESP32
+with an IR LED (ideally through a transistor/driver for real range) wired to
+a GPIO pin, and exposes it as an `infrared.*` emitter entity via ESPHome's
+experimental `infrared`/`ir_rf_proxy` platform, which is all this integration
+(or any other Infrared-based one) needs.
+
+```sh
+cd esphome
+cp secrets.yaml.example secrets.yaml   # fill in your wifi + a fresh api key
+esphome run ir-blaster.yaml
+```
+
+Adjust `board` and `ir_led_pin` in the substitutions at the top of the file
+to match your hardware first.
 
 ## Installation
 

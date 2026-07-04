@@ -2,3 +2,6 @@ __pycache__/
 *.pyc
 .vscode/
 .DS_Store
+
+esphome/secrets.yaml
+esphome/.esphome/

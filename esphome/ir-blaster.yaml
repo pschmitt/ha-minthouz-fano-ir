@@ -1,0 +1,51 @@
+# Minimal, generic ESPHome config for an IR blaster this integration (or
+# any other consumer of Home Assistant's Infrared building-block
+# integration) can use as an emitter.
+#
+# Works on any ESP32 with an IR LED wired to a GPIO pin — through a
+# transistor/driver for real range, a bare LED will only work at very
+# close range. Adjust `board` and `ir_led_pin` to match your hardware,
+# drop a secrets.yaml next to this file (see secrets.yaml.example), then:
+#
+#   esphome run ir-blaster.yaml
+
+substitutions:
+  device_name: ir-blaster
+  friendly_name: IR Blaster
+  ir_led_pin: GPIO4 # <-- wire your IR LED (+ driver) to this pin
+
+esphome:
+  name: "${device_name}"
+  friendly_name: "${friendly_name}"
+
+esp32:
+  board: esp32dev # any ESP32 board works, adjust to match your hardware
+  framework:
+    type: esp-idf
+
+wifi:
+  ssid: !secret wifi_ssid
+  password: !secret wifi_password
+
+api:
+  encryption:
+    key: !secret api_encryption_key
+
+ota:
+  - platform: esphome
+
+logger:
+
+remote_transmitter:
+  id: ir_transmitter
+  pin: ${ir_led_pin}
+  carrier_duty_percent: 50%
+  non_blocking: true
+
+# Exposes the transmitter as a proper "infrared" entity (ir_rf_proxy
+# backend) for Home Assistant's Infrared building-block integration to
+# pick up — this is what this integration's config flow looks for.
+infrared:
+  - platform: ir_rf_proxy
+    name: "${friendly_name} Emitter"
+    remote_transmitter_id: ir_transmitter

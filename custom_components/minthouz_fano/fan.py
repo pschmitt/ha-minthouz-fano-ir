@@ -118,33 +118,50 @@ class MinthouzFanoFan(
         )
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        """Turn off the fan.
+        """Turn the fan off deterministically, regardless of assumed state.
 
-        The remote's power button is a toggle, so this only makes sense if
-        our assumed state still matches reality.
+        Power is a toggle, so blindly sending it would turn an
+        already-off fan back on if our assumed state has drifted from
+        reality. Timer 2H guarantees the fan is on first — a no-op if it
+        already was — so the power press that follows always lands on
+        "off". (Timer 2H briefly arms its 2h auto-shutoff LED, but turning
+        the fan off immediately after clears it — same as manually power
+        cycling — so there's no lingering side effect.)
         """
+        await self._send_command(FanoCode.TIMER_2H.to_command())
+        await asyncio.sleep(POWER_ON_SETTLE_DELAY)
         await self._send_command(FanoCode.POWER.to_command())
         self._attr_is_on = False
         self._attr_percentage = 0
         self.async_write_ha_state()
 
-    async def async_set_percentage(self, percentage: int) -> None:
-        """Set the fan speed, powering it on first if it's currently off.
+    async def _ensure_on_at_speed_1(self) -> None:
+        """Deterministically force the fan on at speed 1, regardless of assumed state.
 
-        The speed buttons are a no-op while the fan is off, so an explicit
-        power-on (toggle) is only sent when we believe it's currently off.
+        Timer 2H guarantees on (a no-op if it already was) -> power then
+        guarantees off (since we just forced on) -> power again then
+        guarantees on at speed 1, since powering on always defaults there.
+        The intermediate off clears whatever 2h-timer LED the first press
+        armed, so nothing lingers — at the cost of the fan briefly cycling
+        through off. Worth it: this doesn't depend on our assumed state
+        being correct at all, unlike a single conditional power toggle.
         """
+        await self._send_command(FanoCode.TIMER_2H.to_command())
+        await asyncio.sleep(POWER_ON_SETTLE_DELAY)
+        await self._send_command(FanoCode.POWER.to_command())
+        await asyncio.sleep(POWER_ON_SETTLE_DELAY)
+        await self._send_command(FanoCode.POWER.to_command())
+
+    async def async_set_percentage(self, percentage: int) -> None:
+        """Set the fan speed, forcing a known on-at-speed-1 state first."""
         if percentage == 0:
             await self.async_turn_off()
             return
 
-        if not self._attr_is_on:
-            await self._send_command(FanoCode.POWER.to_command())
-            self._attr_is_on = True
-            self.async_write_ha_state()
-            await asyncio.sleep(POWER_ON_SETTLE_DELAY)
-
+        await self._ensure_on_at_speed_1()
         speed = _percentage_to_speed(percentage)
-        await self._send_command(SPEED_CODES[speed].to_command())
+        if speed != DEFAULT_SPEED:
+            await self._send_command(SPEED_CODES[speed].to_command())
+        self._attr_is_on = True
         self._attr_percentage = _speed_to_percentage(speed)
         self.async_write_ha_state()

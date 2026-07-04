@@ -41,16 +41,28 @@ then pick the infrared emitter entity to send commands through.
 | Entity | Domain | Notes |
 |---|---|---|
 | Fan | `fan` | Power on/off + 3-speed (`33%`/`66%`/`100%`) |
-| LED | `button` | Toggles the fan's status LED |
+| LED | `light` | 3 brightness levels; see below — it's a single cycling button |
 | Timer 2H / 4H / 6H | `button` | Fires the corresponding timer preset |
 
-## A note on state
+## A note on state (and remote quirks)
 
 This remote has **no feedback path** — every state is optimistic/assumed
-(`iot_class: assumed_state`). The power button on the physical remote is a
-toggle, so if you use the physical remote (or power-cycle the fan) alongside
-this integration, the `fan` entity's on/off state can desync from reality
-until the next command is sent from Home Assistant.
+(`iot_class: assumed_state`). If you use the physical remote (or power-cycle
+the fan) alongside this integration, entity state can desync from reality
+until the next command is sent from Home Assistant. A few quirks, confirmed
+against the real hardware, that the integration accounts for:
+
+- **Power is a toggle.** The `fan` entity tracks assumed on/off state itself.
+- **Speed buttons are a no-op while the fan is off** — only the power button
+  turns it on. `fan.turn_on`/`set_percentage` sends power first (with a short
+  settle delay) when it believes the fan is currently off.
+- **Timer buttons *do* turn the fan on** (at speed 1) by themselves when it's
+  off — no power press needed. Pressing one updates the `fan` entity's
+  assumed state to match.
+- **The LED has one physical button, not per-level commands.** Every press
+  advances a 4-state cycle: off → low → medium → high → off → ... The `light`
+  entity works out how many presses (with a short delay between each) are
+  needed to get from its current assumed state to the requested one.
 
 ## How the codes were captured
 

@@ -13,8 +13,7 @@ CONF_INFRARED_ENTITY_ID = "infrared_entity_id"
 # captured with `ir-keytable -s rc0 -p nec -t` off the physical remote.
 NEC_ADDRESS = 0x00
 
-SPEED_COUNT = 3
-ORDERED_SPEEDS = ["1", "2", "3"]
+SPEED_RANGE = (1, 3)  # (min, max) integer speed levels
 
 
 class FanoCode(IntEnum):
@@ -37,7 +36,12 @@ class FanoCode(IntEnum):
 
 
 SPEED_CODES = {
-    "1": FanoCode.SPEED_1,
-    "2": FanoCode.SPEED_2,
-    "3": FanoCode.SPEED_3,
+    1: FanoCode.SPEED_1,
+    2: FanoCode.SPEED_2,
+    3: FanoCode.SPEED_3,
 }
+
+# The LED has no dedicated per-level command — a single button cycles
+# off -> low -> medium -> high -> off on every press. Brightness values
+# chosen to split 0-255 evenly across the 3 "on" levels.
+LED_BRIGHTNESS_LEVELS = [85, 170, 255]

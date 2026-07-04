@@ -1,7 +1,9 @@
 """Button platform for the Minthouz Fano P12L (IR) integration.
 
-Covers the remote buttons that don't map onto the `fan` entity model:
-the LED toggle and the three timer presets.
+Covers the three timer presets — the only remote buttons that don't map
+onto the `fan`/`light` entity models. Unlike the plain speed buttons, the
+timer buttons also turn the fan on (at speed 1) by themselves when it's
+currently off, so pressing one updates the fan entity's assumed state too.
 """
 
 from __future__ import annotations
@@ -14,7 +16,7 @@ from homeassistant.config_entries import ConfigEntry
 from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONF_INFRARED_ENTITY_ID, FanoCode
+from .const import CONF_INFRARED_ENTITY_ID, DOMAIN, FanoCode
 from .entity import MinthouzFanoEntity
 
 
@@ -23,32 +25,30 @@ class MinthouzFanoButtonDescription(ButtonEntityDescription):
     """Describes a Minthouz Fano P12L IR button."""
 
     code: FanoCode
+    turns_on_fan: bool = False
 
 
 BUTTON_DESCRIPTIONS: tuple[MinthouzFanoButtonDescription, ...] = (
-    MinthouzFanoButtonDescription(
-        key="led",
-        translation_key="led",
-        icon="mdi:led-outline",
-        code=FanoCode.LED,
-    ),
     MinthouzFanoButtonDescription(
         key="timer_2h",
         translation_key="timer_2h",
         icon="mdi:timer-outline",
         code=FanoCode.TIMER_2H,
+        turns_on_fan=True,
     ),
     MinthouzFanoButtonDescription(
         key="timer_4h",
         translation_key="timer_4h",
         icon="mdi:timer-outline",
         code=FanoCode.TIMER_4H,
+        turns_on_fan=True,
     ),
     MinthouzFanoButtonDescription(
         key="timer_6h",
         translation_key="timer_6h",
         icon="mdi:timer-outline",
         code=FanoCode.TIMER_6H,
+        turns_on_fan=True,
     ),
 )
 
@@ -80,3 +80,9 @@ class MinthouzFanoButton(MinthouzFanoEntity, InfraredEmitterConsumerEntity, Butt
     async def async_press(self) -> None:
         """Send the IR code for this button."""
         await self._send_command(self.entity_description.code.to_command())
+
+        if not self.entity_description.turns_on_fan:
+            return
+        entry_data = self.hass.data.get(DOMAIN, {}).get(self._entry.entry_id, {})
+        if fan_entity := entry_data.get("fan_entity"):
+            fan_entity.mark_on_at_speed_1_if_off()

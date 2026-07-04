@@ -13,10 +13,12 @@
     }
   },
   "entity": {
-    "button": {
+    "light": {
       "led": {
         "name": "LED"
-      },
+      }
+    },
+    "button": {
       "timer_2h": {
         "name": "Timer 2H"
       },

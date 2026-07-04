@@ -16,6 +16,7 @@ class MinthouzFanoEntity(Entity):
 
     def __init__(self, entry: ConfigEntry, unique_id_suffix: str) -> None:
         """Set up the shared device info and unique id."""
+        self._entry = entry
         self._attr_unique_id = f"{entry.entry_id}_{unique_id_suffix}"
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},

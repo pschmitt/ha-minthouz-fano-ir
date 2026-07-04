@@ -1,13 +1,31 @@
 # Minthouz Fano P12L Fan (IR) for Home Assistant
 
+<img src="docs/images/fano-p12l.webp" alt="Minthouz Fano P12L clip fan" width="280" align="right">
+
 A custom Home Assistant integration that controls a **Minthouz Fano P12L**
-standing fan (an unbranded/generic NEC-IR remote fan, likely shared by many
+clip fan (an unbranded/generic NEC-IR remote fan, likely shared by many
 rebadged clones) through Home Assistant's built-in **Infrared** building-block
 integration.
 
 It does not talk to hardware directly — it sends commands through whichever
 `infrared.*` emitter entity you already have set up (e.g. an ESPHome device
 using the `infrared`/`ir_rf_proxy` platform, pointed at a real IR LED).
+
+<br clear="right">
+
+## Hardware
+
+|  |  |
+|---|---|
+| **Product** | [Minthouz Fano P12L — 12000mAh Portable Fan with Clip](https://www.minthouz.com/12000mah-portable-fan-with-clip-p12l) |
+| **Control** | 8-button IR remote (NEC protocol), no Bluetooth/Wi-Fi |
+| **Manufacturer** | Minthouz — unofficial/reverse-engineered integration, not affiliated |
+
+<p align="center">
+  <img src="docs/images/remote.png" alt="Minthouz Fano P12L remote" width="220">
+</p>
+
+<p align="center"><sub>The 8-button remote this integration replaces.</sub></p>
 
 ## Requirements
 
@@ -20,21 +38,25 @@ using the `infrared`/`ir_rf_proxy` platform, pointed at a real IR LED).
 
 ## Installation
 
-### HACS (custom repository)
+### HACS (recommended)
 
-1. HACS → Integrations → ⋮ → Custom repositories.
-2. Add `https://github.com/pschmitt/ha-minthouz-fano-ir` as an "Integration".
-3. Install "Minthouz Fano P12L Fan (IR)", then restart Home Assistant.
+[![Open your Home Assistant instance and open a repository inside the Home Assistant Community Store.](https://my.home-assistant.io/badges/hacs_repository.svg)](https://my.home-assistant.io/redirect/hacs_repository/?owner=pschmitt&repository=ha-minthouz-fano-ir&category=integration)
+
+1. Click the badge above, or open HACS → Integrations → ⋮ → Custom repositories
+   and add `https://github.com/pschmitt/ha-minthouz-fano-ir` as an **Integration**.
+2. Install **Minthouz Fano P12L Fan (IR)**, then restart Home Assistant.
 
 ### Manual
 
-Copy `custom_components/minthouz_fano` into your Home Assistant `config/custom_components/`
-directory and restart.
+Copy `custom_components/minthouz_fano` into your Home Assistant
+`config/custom_components/` directory and restart.
 
 ## Setup
 
-Settings → Devices & Services → Add Integration → "Minthouz Fano P12L Fan (IR)",
-then pick the infrared emitter entity to send commands through.
+[![Open your Home Assistant instance and start setting up a new integration.](https://my.home-assistant.io/badges/config_flow_start.svg)](https://my.home-assistant.io/redirect/config_flow_start/?domain=minthouz_fano)
+
+Or: **Settings → Devices & Services → Add Integration → Minthouz Fano P12L Fan
+(IR)**, then pick the infrared emitter entity to send commands through.
 
 ## Entities
 

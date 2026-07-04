@@ -84,15 +84,21 @@ Or: **Settings → Devices & Services → Add Integration → Minthouz Fano P12L
 ## A note on state (and remote quirks)
 
 This remote has **no feedback path** — every state is optimistic/assumed
-(`iot_class: assumed_state`). If you use the physical remote (or power-cycle
-the fan) alongside this integration, entity state can desync from reality
-until the next command is sent from Home Assistant. A few quirks, confirmed
-against the real hardware, that the integration accounts for:
+(`iot_class: assumed_state`), and `light`/`button` state can still desync
+from reality if you use the physical remote. The `fan` entity is more
+robust than that, though: since power is a toggle and speed buttons are a
+no-op while off, a naive "toggle if we think it's off" approach would
+misfire the moment our assumed state drifted. Instead it exploits a quirk
+confirmed against the real hardware — **Timer 2H unconditionally turns the
+fan on (a no-op if it already was)**, unlike the power button, which
+blindly toggles. Chaining Timer 2H → Power → Power therefore
+deterministically forces "on at speed 1" regardless of the fan's actual
+prior state, and Timer 2H → Power deterministically forces "off". Both
+`fan.turn_on`/`set_percentage`/`turn_off` use this — at the cost of the fan
+briefly cycling through off/on — instead of trusting assumed state at all.
+(The intermediate power-off also clears the 2h-timer LED Timer 2H arms, so
+there's no lingering side effect from using it this way.)
 
-- **Power is a toggle.** The `fan` entity tracks assumed on/off state itself.
-- **Speed buttons are a no-op while the fan is off** — only the power button
-  turns it on. `fan.turn_on`/`set_percentage` sends power first (with a short
-  settle delay) when it believes the fan is currently off.
 - **Timer buttons *do* turn the fan on** (at speed 1) by themselves when it's
   off — no power press needed. Pressing one updates the `fan` entity's
   assumed state to match.

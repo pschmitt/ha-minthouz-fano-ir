@@ -15,11 +15,9 @@ using the `infrared`/`ir_rf_proxy` platform, pointed at a real IR LED).
 
 ## Hardware
 
-|  |  |
-|---|---|
-| **Product** | [Minthouz Fano P12L — 12000mAh Portable Fan with Clip](https://www.minthouz.com/12000mah-portable-fan-with-clip-p12l) |
-| **Control** | 8-button IR remote (NEC protocol), no Bluetooth/Wi-Fi |
-| **Manufacturer** | Minthouz — unofficial/reverse-engineered integration, not affiliated |
+- **Product:** [Minthouz Fano P12L — 12000mAh Portable Fan with Clip](https://www.minthouz.com/12000mah-portable-fan-with-clip-p12l)
+- **Control:** 8-button IR remote (NEC protocol), no Bluetooth/Wi-Fi
+- **Manufacturer:** Minthouz — unofficial/reverse-engineered integration, not affiliated
 
 <p align="center">
   <img src="docs/images/remote.png" alt="Minthouz Fano P12L remote" width="220">

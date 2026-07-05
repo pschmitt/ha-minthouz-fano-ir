@@ -6,10 +6,17 @@
         "data": {
           "infrared_entity_id": "Infrared emitter"
         }
+      },
+      "reconfigure": {
+        "description": "Select the infrared emitter that will be used to send commands to the fan.",
+        "data": {
+          "infrared_entity_id": "Infrared emitter"
+        }
       }
     },
     "abort": {
-      "no_infrared_entities": "No infrared emitter entities were found. Set up an Infrared-compatible device (e.g. an ESPHome IR blaster) first."
+      "no_infrared_entities": "No infrared emitter entities were found. Set up an Infrared-compatible device (e.g. an ESPHome IR blaster) first.",
+      "reconfigure_successful": "The infrared emitter was updated successfully."
     }
   },
   "entity": {

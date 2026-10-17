@@ -30,9 +30,7 @@ class FanoCode(IntEnum):
 
     def to_command(self, repeat_count: int = 0) -> Command:
         """Build the infrared_protocols Command for this button."""
-        return NECCommand(
-            address=NEC_ADDRESS, command=self.value, repeat_count=repeat_count
-        )
+        return NECCommand(address=NEC_ADDRESS, command=self.value, repeat_count=repeat_count)
 
 
 SPEED_CODES = {

@@ -69,9 +69,7 @@ class MinthouzFanoButton(MinthouzFanoEntity, InfraredEmitterConsumerEntity, Butt
 
     entity_description: MinthouzFanoButtonDescription
 
-    def __init__(
-        self, entry: ConfigEntry, description: MinthouzFanoButtonDescription
-    ) -> None:
+    def __init__(self, entry: ConfigEntry, description: MinthouzFanoButtonDescription) -> None:
         """Set up the button entity."""
         super().__init__(entry, unique_id_suffix=description.key)
         self.entity_description = description

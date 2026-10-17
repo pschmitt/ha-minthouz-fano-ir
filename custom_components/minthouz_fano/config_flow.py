@@ -5,8 +5,8 @@ from __future__ import annotations
 from typing import Any
 
 import voluptuous as vol
-
-from homeassistant.components.infrared import DOMAIN as INFRARED_DOMAIN, async_get_emitters
+from homeassistant.components.infrared import DOMAIN as INFRARED_DOMAIN
+from homeassistant.components.infrared import async_get_emitters
 from homeassistant.config_entries import SOURCE_RECONFIGURE, ConfigFlow, ConfigFlowResult
 from homeassistant.helpers.selector import EntitySelector, EntitySelectorConfig
 
@@ -18,9 +18,7 @@ class MinthouzFanoConfigFlow(ConfigFlow, domain=DOMAIN):
 
     VERSION = 1
 
-    async def async_step_user(
-        self, user_input: dict[str, Any] | None = None
-    ) -> ConfigFlowResult:
+    async def async_step_user(self, user_input: dict[str, Any] | None = None) -> ConfigFlowResult:
         """Ask the user which infrared emitter drives this fan."""
         return await self._async_step_infrared_entity(user_input)
 

@@ -1,13 +1,17 @@
 {
   "domain": "minthouz_fano",
   "name": "Minthouz Fano P12L Fan (IR)",
-  "codeowners": ["@pschmitt"],
+  "codeowners": [
+    "@pschmitt"
+  ],
   "config_flow": true,
-  "dependencies": ["infrared"],
+  "dependencies": [
+    "infrared"
+  ],
   "documentation": "https://github.com/pschmitt/ha-minthouz-fano-ir",
   "integration_type": "device",
   "iot_class": "assumed_state",
   "issue_tracker": "https://github.com/pschmitt/ha-minthouz-fano-ir/issues",
-  "requirements": ["infrared-protocols>=6.3.1"],
+  "requirements": [],
   "version": "1.0.0"
 }

@@ -21,7 +21,7 @@ from homeassistant.util.percentage import (
     ranged_value_to_percentage,
 )
 
-from .const import CONF_INFRARED_ENTITY_ID, DOMAIN, FanoCode, SPEED_CODES, SPEED_RANGE
+from .const import CONF_INFRARED_ENTITY_ID, DOMAIN, SPEED_CODES, SPEED_RANGE, FanoCode
 from .entity import MinthouzFanoEntity
 
 DEFAULT_SPEED = SPEED_RANGE[0]
@@ -57,17 +57,13 @@ async def async_setup_entry(
     async_add_entities([MinthouzFanoFan(entry)])
 
 
-class MinthouzFanoFan(
-    MinthouzFanoEntity, InfraredEmitterConsumerEntity, RestoreEntity, FanEntity
-):
+class MinthouzFanoFan(MinthouzFanoEntity, InfraredEmitterConsumerEntity, RestoreEntity, FanEntity):
     """Fan entity that drives the Minthouz Fano P12L over IR."""
 
     _attr_name = None
     _attr_speed_count = SPEED_RANGE[1] - SPEED_RANGE[0] + 1
     _attr_supported_features = (
-        FanEntityFeature.SET_SPEED
-        | FanEntityFeature.TURN_ON
-        | FanEntityFeature.TURN_OFF
+        FanEntityFeature.SET_SPEED | FanEntityFeature.TURN_ON | FanEntityFeature.TURN_OFF
     )
     _attr_assumed_state = True
     _attr_is_on = False

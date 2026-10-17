@@ -18,7 +18,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 from homeassistant.helpers.restore_state import RestoreEntity
 
-from .const import CONF_INFRARED_ENTITY_ID, FanoCode, LED_BRIGHTNESS_LEVELS
+from .const import CONF_INFRARED_ENTITY_ID, LED_BRIGHTNESS_LEVELS, FanoCode
 from .entity import MinthouzFanoEntity
 
 # Delay between successive presses of the same cycle button, so the fan's
